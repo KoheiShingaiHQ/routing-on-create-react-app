@@ -1,13 +1,30 @@
-# Getting started with Create React App
-> Official : [create-react-app](https://github.com/facebookincubator/create-react-app)  
+# Customizing Create React App : *CSS*
 
-## Quick Overview
+## CSS → Sass
+Getting started customizing `polyreact` .
+
+### Install npm module : *node-sass-chokidar*
 ```bash
-# Current path : ~/.
-npm i -g create-react-app
-create-react-app polyreact
-cd polyreact/
-npm start
+# Current path : ~/polyreact
+npm install node-sass-chokidar --save-dev
 ```
 
-Then open http://localhost:3000 to see `polyreact` .
+### Install npm module : *npm-run-all*
+```bash
+# Current path : ~/polyreact
+npm install npm-run-all --save-dev
+```
+
+### Edit package.json : *script*
+```diff
+# Current path : ~/polyreact/package.json
+-    "start": "react-scripts start",
+-    "build": "react-scripts build",
++    "start-js": "react-scripts start",
++    "start": "npm-run-all -p watch-css start-js",
++    "build": "npm run build-css && react-scripts build",
++    "build-css": "node-sass-chokidar src/ -o src/",
++    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+```
+
+→ Running `npm start` compiles `.sass` files to `.css` under `/src` directory.

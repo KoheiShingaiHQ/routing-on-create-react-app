@@ -1,13 +1,30 @@
-# Create React Appのはじめかた
-> 公式 : [create-react-app](https://github.com/facebookincubator/create-react-app)  
+# Create React App - *CSS* のカスタマイズ
 
-## インストールと起動
+## CSS → Sass
+`polyreact` を、カスタマイズしてみます。
+
+### npmモジュール - *node-sass-chokidar* のインストール
 ```bash
-# カレントディレクトリ : ~/.
-npm i -g create-react-app
-create-react-app polyreact
-cd polyreact/
-npm start
+# カレントディレクトリ : ~/polyreact
+npm install node-sass-chokidar --save-dev
 ```
 
-→ http://localhost:3000 を開くと、 `polyreact` の内容が表示されます。
+### npmモジュール - *npm-run-all* のインストール
+```bash
+# カレントディレクトリ : ~/polyreact
+npm install npm-run-all --save-dev
+```
+
+### package.json - *script* の編集
+```diff
+# ファイルパス : ~/polyreact/package.json
+-    "start": "react-scripts start",
+-    "build": "react-scripts build",
++    "start-js": "react-scripts start",
++    "start": "npm-run-all -p watch-css start-js",
++    "build": "npm run build-css && react-scripts build",
++    "build-css": "node-sass-chokidar src/ -o src/",
++    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+```
+
+→ `npm start` 実行により、`/src` フォルダ以下の `.sass` ファイルが、`.css` に変換されます。
