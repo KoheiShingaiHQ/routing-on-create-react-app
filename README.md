@@ -27,4 +27,20 @@ npm install npm-run-all --save-dev
 +    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
 ```
 
-→ Running `npm start` compiles `.sass` files to `.css` under `/src` directory.
+### Add custom sass file to the project
+```sass
+/* File path : ~/polyreact/src/Custom.sass */
+body
+  background: powderblue
+```
+
+```diff
+# File path : ~/polyreact/src/App.js
+import './App.css';
++ import './Custom.css'
+```
+
+→ Running `npm start` compiles `.sass` files to `.css` under `/src` directory.  
+→ Open http://localhost:3000 to see `polyreact` .
+
+![create-react-app-with-sass-screen-shot](https://c1.staticflickr.com/5/4465/36878306283_8811ec8516_b.jpg)

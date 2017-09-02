@@ -27,4 +27,20 @@ npm install npm-run-all --save-dev
 +    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
 ```
 
-→ `npm start` 実行により、`/src` フォルダ以下の `.sass` ファイルが、`.css` に変換されます。
+### カスタマイズ用 Sass ファイルをプロジェクトへ追加
+```sass
+/* ファイルパス : ~/polyreact/src/Custom.sass */
+body
+  background: powderblue
+```
+
+```diff
+# ファイルパス : ~/polyreact/src/App.js
+import './App.css';
++ import './Custom.css'
+```
+
+→ `npm start` 実行により、`/src` フォルダ以下の `.sass` ファイルが、`.css` に変換されます。  
+→ http://localhost:3000 を開くと、 `polyreact` の内容が表示されます。
+
+![create-react-app-with-sass-screen-shot](https://c1.staticflickr.com/5/4465/36878306283_8811ec8516_b.jpg)
