@@ -1,46 +1,80 @@
-# Create React App - *CSS* のカスタマイズ
+# Create React App - *Redux* の導入
 
-## CSS → Sass
+## Create React App + Redux
 `polyreact` を、カスタマイズしてみます。
 
-### npmモジュール - *node-sass-chokidar* のインストール
+### yarnモジュール - *redux* とその他のインストール
 ```bash
 # カレントディレクトリ : ~/polyreact
-npm install node-sass-chokidar --save-dev
+yarn add redux react-redux react-router-dom react-router-redux@next redux-thunk
 ```
 
-### npmモジュール - *npm-run-all* のインストール
+### フォルダとjsファイル - *modules* の作成
 ```bash
-# カレントディレクトリ : ~/polyreact
-npm install npm-run-all --save-dev
+# カレントディレクトリ : ~/polyreact/src
+mkdir modules
 ```
 
-### package.json - *script* の編集
+```js
+// ファイルパス : ~/polyreact/src/modules/index.js
+import { combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
+
+export default combineReducers({
+  routing: routerReducer
+})
+```
+
+### jsファイル - *store.js* の追加
+```js
+// ファイルパス : ~/polyreact/src/store.js
+import { createStore, applyMiddleware, compose } from 'redux'
+import { routerMiddleware } from 'react-router-redux'
+import thunk from 'redux-thunk'
+import createHistory from 'history/createBrowserHistory'
+import rootReducer from './modules'
+
+export const history = createHistory()
+
+const initialState = {}
+const enhancers = []
+const middleware = [
+  thunk,
+  routerMiddleware(history)
+]
+
+if (process.env.NODE_ENV === 'development') {
+  const devToolsExtension = window.devToolsExtension
+
+  if (typeof devToolsExtension === 'function') {
+    enhancers.push(devToolsExtension())
+  }
+}
+
+const composedEnhancers = compose(
+  applyMiddleware(...middleware),
+  ...enhancers
+)
+
+const store = createStore(
+  rootReducer,
+  initialState,
+  composedEnhancers
+)
+
+export default store
+```
+
+### jsファイル - *index.js* の編集
 ```diff
-# ファイルパス : ~/polyreact/package.json
--    "start": "react-scripts start",
--    "build": "react-scripts build",
-+    "start-js": "react-scripts start",
-+    "start": "npm-run-all -p watch-css start-js",
-+    "build": "npm run build-css && react-scripts build",
-+    "build-css": "node-sass-chokidar src/ -o src/",
-+    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+# ファイルパス : ~/polyreact/src/index.js
++ import { Provider } from 'react-redux';
++ import { ConnectedRouter } from 'react-router-redux';
++ import store, { history } from './store';
 ```
 
-### カスタマイズ用 Sass ファイルをプロジェクトへ追加
-```sass
-/* ファイルパス : ~/polyreact/src/Custom.sass */
-body
-  background: powderblue
-```
-
+### jsファイル - *app.js* の編集
 ```diff
-# ファイルパス : ~/polyreact/src/App.js
-import './App.css';
-+ import './Custom.css'
+# ファイルパス : ~/polyreact/src/app.js
++ import { Route, Link } from 'react-router-dom';
 ```
-
-→ `npm start` 実行により、`/src` フォルダ以下の `.sass` ファイルが、`.css` に変換されます。  
-→ http://localhost:3000 を開くと、 `polyreact` の内容が表示されます。
-
-![create-react-app-with-sass-screen-shot](https://c1.staticflickr.com/5/4465/36878306283_8811ec8516_b.jpg)

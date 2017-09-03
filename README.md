@@ -1,46 +1,79 @@
-# Customizing Create React App : *CSS*
+# Customizing Create React App : *Redux*
 
-## CSS → Sass
+## Create React App + Redux
 Getting started customizing `polyreact` .
 
-### Install npm module : *node-sass-chokidar*
+### Add yarn modules : *redux and others*
 ```bash
 # Current path : ~/polyreact
-npm install node-sass-chokidar --save-dev
+yarn add redux react-redux react-router-dom react-router-redux@next redux-thunk
 ```
 
-### Install npm module : *npm-run-all*
+### Create directory and js file : *modules*
 ```bash
-# Current path : ~/polyreact
-npm install npm-run-all --save-dev
+# Current path : ~/polyreact/src
+mkdir modules
 ```
 
-### Edit package.json : *script*
+```js
+// File path : ~/polyreact/src/modules/index.js
+import { combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
+
+export default combineReducers({
+  routing: routerReducer
+})
+```
+### Add js file : *store.js*
+```js
+// File path : ~/polyreact/src/store.js
+import { createStore, applyMiddleware, compose } from 'redux'
+import { routerMiddleware } from 'react-router-redux'
+import thunk from 'redux-thunk'
+import createHistory from 'history/createBrowserHistory'
+import rootReducer from './modules'
+
+export const history = createHistory()
+
+const initialState = {}
+const enhancers = []
+const middleware = [
+  thunk,
+  routerMiddleware(history)
+]
+
+if (process.env.NODE_ENV === 'development') {
+  const devToolsExtension = window.devToolsExtension
+
+  if (typeof devToolsExtension === 'function') {
+    enhancers.push(devToolsExtension())
+  }
+}
+
+const composedEnhancers = compose(
+  applyMiddleware(...middleware),
+  ...enhancers
+)
+
+const store = createStore(
+  rootReducer,
+  initialState,
+  composedEnhancers
+)
+
+export default store
+```
+
+### Edit js file : *index.js*
 ```diff
-# Current path : ~/polyreact/package.json
--    "start": "react-scripts start",
--    "build": "react-scripts build",
-+    "start-js": "react-scripts start",
-+    "start": "npm-run-all -p watch-css start-js",
-+    "build": "npm run build-css && react-scripts build",
-+    "build-css": "node-sass-chokidar src/ -o src/",
-+    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+# File path : ~/polyreact/src/index.js
++ import { Provider } from 'react-redux';
++ import { ConnectedRouter } from 'react-router-redux';
++ import store, { history } from './store';
 ```
 
-### Add custom sass file to the project
-```sass
-/* File path : ~/polyreact/src/Custom.sass */
-body
-  background: powderblue
-```
-
+### Edit js file : *app.js*
 ```diff
-# File path : ~/polyreact/src/App.js
-import './App.css';
-+ import './Custom.css'
+# File path : ~/polyreact/src/app.js
++ import { Route, Link } from 'react-router-dom';
 ```
-
-→ Running `npm start` compiles `.sass` files to `.css` under `/src` directory.  
-→ Open http://localhost:3000 to see `polyreact` .
-
-![create-react-app-with-sass-screen-shot](https://c1.staticflickr.com/5/4465/36878306283_8811ec8516_b.jpg)
