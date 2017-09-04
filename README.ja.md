@@ -1,80 +1,101 @@
-# Create React App - *Redux* の導入
+# Create React App - *Routing* の実装
 
-## Create React App + Redux
+## Routing → Create React App
 `polyreact` を、カスタマイズしてみます。
-
-### yarnモジュール - *redux* とその他のインストール
-```bash
-# カレントディレクトリ : ~/polyreact
-yarn add redux react-redux react-router-dom react-router-redux@next redux-thunk
-```
-
-### フォルダとjsファイル - *modules* の作成
-```bash
-# カレントディレクトリ : ~/polyreact/src
-mkdir modules
-```
-
-```js
-// ファイルパス : ~/polyreact/src/modules/index.js
-import { combineReducers } from 'redux'
-import { routerReducer } from 'react-router-redux'
-
-export default combineReducers({
-  routing: routerReducer
-})
-```
-
-### jsファイル - *store.js* の追加
-```js
-// ファイルパス : ~/polyreact/src/store.js
-import { createStore, applyMiddleware, compose } from 'redux'
-import { routerMiddleware } from 'react-router-redux'
-import thunk from 'redux-thunk'
-import createHistory from 'history/createBrowserHistory'
-import rootReducer from './modules'
-
-export const history = createHistory()
-
-const initialState = {}
-const enhancers = []
-const middleware = [
-  thunk,
-  routerMiddleware(history)
-]
-
-if (process.env.NODE_ENV === 'development') {
-  const devToolsExtension = window.devToolsExtension
-
-  if (typeof devToolsExtension === 'function') {
-    enhancers.push(devToolsExtension())
-  }
-}
-
-const composedEnhancers = compose(
-  applyMiddleware(...middleware),
-  ...enhancers
-)
-
-const store = createStore(
-  rootReducer,
-  initialState,
-  composedEnhancers
-)
-
-export default store
-```
 
 ### jsファイル - *index.js* の編集
 ```diff
 # ファイルパス : ~/polyreact/src/index.js
-+ import { Provider } from 'react-redux';
-+ import { ConnectedRouter } from 'react-router-redux';
-+ import store, { history } from './store';
+- ReactDOM.render(<App />, document.getElementById('root'));
++ ReactDOM.render(
++   <Provider store={store}>
++     <ConnectedRouter history={history}>
++       <div>
++         <App />
++       </div>
++     </ConnectedRouter>
++   </Provider>,
++ document.getElementById('root'));
 ```
 
-### jsファイル - *app.js* の編集
+### フォルダとjsファイル - *container* の作成
+```bash
+# カレントディレクトリ : ~/polyreact/src
+mkdir container
+```
+
+```js
+// ファイルパス : ~/polyreact/src/container/featured.js
+import React, { Component } from 'react';
+import { Route, Link } from 'react-router-dom'
+
+class Featured extends Component {
+  render() {
+    return (
+      <p>Featured</p>
+    );
+  }
+}
+
+export default Featured;
+```
+
+```js
+// ファイルパス : ~/polyreact/src/container/About.js
+import React, { Component } from 'react';
+import { Route, Link } from 'react-router-dom'
+
+class About extends Component {
+  render() {
+    return (
+      <p>About</p>
+    );
+  }
+}
+
+export default About;
+```
+
+```js
+// ファイルパス : ~/polyreact/src/container/Article.js
+import React, { Component } from 'react';
+import { Route, Link } from 'react-router-dom'
+
+class Article extends Component {
+  render() {
+    return (
+      <p>Article</p>
+    );
+  }
+}
+
+export default Article;
+```
+
+### jsファイル - *App.js* の編集
 ```diff
 # ファイルパス : ~/polyreact/src/app.js
-+ import { Route, Link } from 'react-router-dom';
++ import Featured from './container/Featured.js';
++ import About from './container/About.js';
++ import Article from './container/Article.js';
+  import logo from './logo.svg';
+  import './App.css';
+
+  class App extends Component {
+    render() {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1 className="App-title">Welcome to React</h1>
+          </header>
++         <Link to="/"><p>Featured</p></Link>
++         <Link to="/about"><p>About</p></Link>
++         <Link to="/article"><p>Article</p></Link>
+          <p className="App-intro">
+            To get started, edit <code>src/App.js</code> and save to reload.
+          </p>
++         <Route exact path="/" component={Featured} />
++         <Route exact path="/about" component={About} />
++         <Route exact path="/article" component={Article} />
 ```
