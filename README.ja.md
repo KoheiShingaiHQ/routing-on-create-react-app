@@ -102,4 +102,6 @@ export default Article;
 
 → http://localhost:3000 を開くと、 `polyreact` の内容が表示されます。
 
+> 見本 : [koheishingaiHQ.github.io/routing-on-create-react-app](https://koheishingaihq.github.io/routing-on-create-react-app)
+
 ![routing-on-crate-react-app-screen-shot](https://c1.staticflickr.com/5/4497/36880247443_0c716eb73c_b.jpg)
