@@ -99,3 +99,7 @@ export default Article;
 +         <Route exact path="/about" component={About} />
 +         <Route exact path="/article" component={Article} />
 ```
+
+→ Open http://localhost:3000 to see `polyreact` .
+
+![routing-on-crate-react-app-screen-shot](https://c1.staticflickr.com/5/4497/36880247443_0c716eb73c_b.jpg)
